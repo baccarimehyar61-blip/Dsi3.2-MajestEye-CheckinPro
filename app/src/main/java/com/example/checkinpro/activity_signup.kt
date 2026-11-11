@@ -14,6 +14,9 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        // Masquer la barre d'action
+        supportActionBar?.hide()
+
         val edtFullName = findViewById<EditText>(R.id.edtFullName)
         val edtEmail = findViewById<EditText>(R.id.edtEmail)
         val edtPassword = findViewById<EditText>(R.id.edtPassword)
