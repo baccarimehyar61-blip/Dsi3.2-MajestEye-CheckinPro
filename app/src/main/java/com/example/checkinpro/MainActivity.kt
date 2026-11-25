@@ -1,4 +1,3 @@
-
 package com.example.checkinpro
 
 import android.content.Intent
@@ -14,9 +13,13 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var bdService: BDLocalService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        bdService = BDLocalService(this)
 
         // Masquer la barre d'action
         supportActionBar?.hide()
@@ -41,28 +44,47 @@ class MainActivity : AppCompatActivity() {
             val p = password.text.toString()
 
             if (e.isEmpty()) {
-                email.error = "Email is required"
+                email.error = "L'adresse e-mail est obligatoire"
             }
             else if (!Patterns.EMAIL_ADDRESS.matcher(e).matches()) {
-                email.error = "Invalid email address"
+                email.error = "Adresse e-mail invalide"
             }
             else if (p.isEmpty()) {
-                password.error = "Password is required"
+                password.error = "Le mot de passe est obligatoire"
             }
             else if (p.length < 6) {
-                password.error = "Minimum 6 characters"
+                password.error = "Minimum 6 caractères"
             }
             else {
-                Toast.makeText(
-                    this,
-                    "Login successful",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val connectedUser = bdService.checkLogin(e, p)
 
-                if (remember.isChecked) {
+                if (connectedUser != null) {
                     Toast.makeText(
                         this,
-                        "Remember me activated",
+                        "Connexion réussie",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    if (remember.isChecked) {
+                        Toast.makeText(
+                            this,
+                            "Se souvenir de moi activé",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    if (connectedUser.role == "ADMIN") {
+                        startActivity(Intent(this, AdminActivity::class.java))
+                    } else {
+                        val intent = Intent(this, UserHomeActivity::class.java)
+                        intent.putExtra("user_name", connectedUser.fullName)
+                        intent.putExtra("user_role", connectedUser.role)
+                        startActivity(intent)
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Adresse e-mail ou mot de passe incorrect",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -73,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         forgot.setOnClickListener {
             Toast.makeText(
                 this,
-                "Forgot Password clicked",
+                "Mot de passe oublié cliqué",
                 Toast.LENGTH_SHORT
             ).show()
         }

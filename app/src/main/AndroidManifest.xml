@@ -13,6 +13,12 @@
             android:name=".SignupActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminActivity" />
+        <activity
+            android:name=".UserDetailActivity" />
+        <activity
+            android:name=".UserHomeActivity" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
