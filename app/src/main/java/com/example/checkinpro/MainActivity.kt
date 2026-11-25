@@ -1,98 +1,109 @@
-
 package com.example.checkinpro
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.button.MaterialButton
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private val BASE_URL = "http://10.0.2.2:8080/"
+    private lateinit var bdService: BDLocalService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val edtEmail = findViewById<TextInputEditText>(R.id.edtEmail)
-        val edtPassword = findViewById<TextInputEditText>(R.id.edtPassword)
-        val btnLogin = findViewById<MaterialButton>(R.id.btnLogin)
+        bdService = BDLocalService(this)
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        // Masquer la barre d'action
+        supportActionBar?.hide()
 
-        val api = retrofit.create(ApiService::class.java)
+        // Personnaliser les barres système
+        window.statusBarColor = Color.rgb(36, 16, 100)
+        window.navigationBarColor = Color.rgb(16, 26, 60)
 
-        btnLogin.setOnClickListener {
+        // Récupérer les composants
+        val email = findViewById<EditText>(R.id.edtEmail)
+        val password = findViewById<EditText>(R.id.edtPassword)
+        val remember = findViewById<CheckBox>(R.id.chkRemember)
 
-            val email = edtEmail.text.toString().trim()
-            val password = edtPassword.text.toString()
+        val login = findViewById<Button>(R.id.btnLogin)
+        val forgot = findViewById<TextView>(R.id.txtForgot)
+        val signup = findViewById<TextView>(R.id.txtSignup)
 
-            if (email.isEmpty() || password.isEmpty()) {Toast.makeText(this,"Veuillez remplir tous les champs",Toast.LENGTH_SHORT
-                ).show()
+        // Bouton Login
+        login.setOnClickListener {
 
-                return@setOnClickListener
+            val e = email.text.toString().trim()
+            val p = password.text.toString()
+
+            if (e.isEmpty()) {
+                email.error = "L'adresse e-mail est obligatoire"
             }
+            else if (!Patterns.EMAIL_ADDRESS.matcher(e).matches()) {
+                email.error = "Adresse e-mail invalide"
+            }
+            else if (p.isEmpty()) {
+                password.error = "Le mot de passe est obligatoire"
+            }
+            else if (p.length < 6) {
+                password.error = "Minimum 6 caractères"
+            }
+            else {
+                val connectedUser = bdService.checkLogin(e, p)
 
-            val user = LoginRequest(email, password)
+                if (connectedUser != null) {
+                    Toast.makeText(
+                        this,
+                        "Connexion réussie",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-            api.connecter(user).enqueue(object : Callback<Map<String, Any>> {
-
-                override fun onResponse(call: Call<Map<String, Any>>,response: Response<Map<String, Any>>) {
-
-                    if (response.isSuccessful && response.body() != null) {
-
-                        val resultat = response.body()!!
-
-                        if (resultat["success"] == true) {
-
-                            val utilisateur =
-                                resultat["utilisateur"] as? Map<*, *>
-
-                            if (utilisateur != null) {
-
-                                val id = (utilisateur["id"] as? Number)?.toLong() ?: 0L
-                                val nom = utilisateur["nom"]?.toString() ?: ""
-                                val prenom = utilisateur["prenom"]?.toString() ?: ""
-                                val emailUtilisateur = utilisateur["email"]?.toString() ?: ""
-
-                                val intent = Intent(
-                                    this@MainActivity,
-                                    InfoActivity::class.java
-                                )
-
-                                intent.putExtra("id", id)
-                                intent.putExtra("nom", nom)
-                                intent.putExtra("prenom", prenom)
-                                intent.putExtra("email", emailUtilisateur)
-
-                                startActivity(intent)
-
-                            } else {
-                                Toast.makeText(this@MainActivity,"Utilisateur introuvable",Toast.LENGTH_SHORT).show()
-                            }
-
-                        } else {
-                            Toast.makeText(this@MainActivity,resultat["message"]?.toString() ?: "Échec de connexion",Toast.LENGTH_LONG).show()
-                        }
-
-                    } else {Toast.makeText(this@MainActivity,"Erreur serveur : ${response.code()}",Toast.LENGTH_SHORT).show()
+                    if (remember.isChecked) {
+                        Toast.makeText(
+                            this,
+                            "Se souvenir de moi activé",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }
 
-                override fun onFailure(call: Call<Map<String, Any>>,t: Throwable) {
-                    Toast.makeText(this@MainActivity,"Erreur de connexion : ${t.message}",Toast.LENGTH_LONG).show()
+                    if (connectedUser.role == "ADMIN") {
+                        startActivity(Intent(this, AdminActivity::class.java))
+                    } else {
+                        val intent = Intent(this, UserHomeActivity::class.java)
+                        intent.putExtra("user_name", connectedUser.fullName)
+                        intent.putExtra("user_role", connectedUser.role)
+                        startActivity(intent)
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Adresse e-mail ou mot de passe incorrect",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            })
+            }
+        }
+
+        // Forgot Password
+        forgot.setOnClickListener {
+            Toast.makeText(
+                this,
+                "Mot de passe oublié cliqué",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // Sign Up
+        signup.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
         }
     }
 }

@@ -1,14 +1,9 @@
 package com.example.checkinpro
 
 data class User(
-
-
-    val nom: String,
-    val prenom: String,
+    val id: Int? = null,
+    val fullName: String,
     val email: String,
-    val password: String
-)
-data class LoginRequest(
-    val email: String,
-    val password: String
+    val password: String,
+    val role: String = "TRAVAILLEUR"
 )
