@@ -1,32 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@drawable/bg_gradient">
 
-    <TextView
-        android:id="@+id/txtWelcomeUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bienvenue"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:gravity="center" />
-
-    <TextView
-        android:id="@+id/txtUserRole"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Rôle : TRAVAILLEUR"
-        android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/btnLogoutUser"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Déconnexion" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
+        android:background="@drawable/login_card">
+
+        <TextView
+            android:id="@+id/txtWelcomeUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bienvenue"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#202B50"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/txtUserRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="Rôle : TRAVAILLEUR"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#5265D8"
+            android:background="@drawable/input_background"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/btnLogoutUser"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="28dp"
+            android:text="Déconnexion"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/login_button"
+            android:backgroundTint="@null"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
 
 </LinearLayout>

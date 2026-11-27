@@ -12,9 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CheckInPro"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".InfoActivity"
-            android:exported="false" />
+
         <!-- 2. Écran d'inscription -->
         <activity
             android:name=".SignupActivity"

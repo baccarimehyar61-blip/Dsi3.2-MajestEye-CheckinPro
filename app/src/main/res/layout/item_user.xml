@@ -3,19 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="14dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/input_background">
 
     <TextView
         android:id="@+id/txtItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#202B50" />
 
     <TextView
         android:id="@+id/txtItemEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="13sp" />
+        android:layout_marginTop="4dp"
+        android:textSize="13sp"
+        android:textColor="#555F78" />
 
 </LinearLayout>
